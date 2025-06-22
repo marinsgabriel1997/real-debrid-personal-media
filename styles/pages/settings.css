@@ -1,0 +1,183 @@
+/* --- Settings Page Specific Styles --- */
+
+.settings-section {
+  background-color: var(--bg-secondary);
+  padding: var(--space-lg);
+  border-radius: var(--radius-lg);
+  margin-bottom: var(--space-xl);
+}
+
+.settings-section:last-child {
+  margin-bottom: 0;
+}
+
+.settings-section > .panel-title {
+  border-bottom: none;
+  padding-bottom: 0;
+  margin-bottom: var(--space-lg);
+}
+
+.panel-subtitle {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-md);
+}
+
+.user-dashboard {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: var(--space-xl);
+}
+
+.user-info-card {
+  display: flex;
+  align-items: center;
+  gap: var(--space-lg);
+  background-color: var(--bg-tertiary);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+}
+
+.user-avatar-placeholder {
+  width: 80px;
+  height: 80px;
+  background-color: var(--bg-primary);
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.user-details p {
+  margin-bottom: var(--space-sm);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.user-details p:last-child {
+  margin-bottom: 0;
+}
+
+.user-details p strong {
+  color: var(--text-primary);
+  font-weight: 500;
+  min-width: 120px;
+  display: inline-block;
+}
+
+.user-details p span {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.traffic-info {
+  background-color: var(--bg-tertiary);
+  padding: var(--space-lg);
+  border-radius: var(--radius-md);
+}
+
+.traffic-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.traffic-grid .empty-state {
+  color: var(--text-muted);
+  font-size: 0.9rem;
+}
+
+.traffic-item {
+  display: grid;
+  grid-template-columns: 120px 1fr auto;
+  align-items: center;
+  gap: var(--space-md);
+  font-size: 0.875rem;
+}
+
+.hoster-name {
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.progress-bar {
+  width: 100%;
+  height: 6px;
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.progress {
+  height: 100%;
+  background-color: var(--jelly-accent);
+  border-radius: var(--radius-full);
+  transition: width 0.3s ease;
+}
+
+.traffic-usage {
+  color: var(--text-muted);
+  font-weight: 500;
+}
+
+.form-grid,
+.actions-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: var(--space-lg);
+  align-items: end;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.form-group label {
+  font-weight: 500;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.input-with-status {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-with-status .action-input {
+  padding-right: 2.5rem; /* Space for the indicator */
+}
+
+.api-status {
+  position: absolute;
+  right: 0.75rem;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background-color: var(--bg-tertiary);
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.api-status.ok {
+  background-color: var(--status-success);
+  box-shadow: 0 0 8px var(--status-success);
+}
+
+.api-status.error {
+  background-color: var(--status-error);
+  box-shadow: 0 0 8px var(--status-error);
+}
+
+.settings-section a {
+  color: var(--text-accent);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.settings-section a:hover {
+  text-decoration: underline;
+}

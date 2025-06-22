@@ -1,0 +1,162 @@
+/* --- Management View Specific Styles --- */
+
+.management-view {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-xl);
+  flex-grow: 1;
+  min-height: 0; /* Prevenção de overflow em contextos flex */
+}
+
+.quick-actions {
+  border-bottom: 1px solid var(--bg-tertiary);
+  padding-bottom: var(--space-lg);
+  margin-bottom: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.add-season-container {
+  margin-top: var(--space-lg);
+  text-align: center;
+}
+
+.torrent-list .torrent-item {
+  background-color: var(--bg-tertiary);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.torrent-list .torrent-item:hover {
+  background-color: #3f4e63;
+}
+
+.torrent-list .torrent-item.selected {
+  border-left-color: var(--jelly-accent);
+  background-color: #3a475b;
+}
+
+.torrent-item .name {
+  font-weight: 500;
+  margin-bottom: var(--space-sm);
+}
+
+.torrent-item .status {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.file-list {
+  margin-top: var(--space-md);
+  padding-left: var(--space-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+.file-item {
+  background-color: var(--bg-primary);
+  padding: var(--space-sm);
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: grab;
+}
+
+.organizer-placeholder {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: var(--text-muted);
+  text-align: center;
+  border: 2px dashed var(--bg-tertiary);
+  border-radius: var(--radius-md);
+}
+
+.organizer-placeholder .icon {
+  font-size: 3rem;
+  margin-bottom: var(--space-md);
+}
+
+/* --- New Organizer Styles --- */
+.media-selector {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  border-bottom: 1px solid var(--bg-tertiary);
+  padding-bottom: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.media-select {
+  width: 100%;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: 0.75rem var(--space-md);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.media-select:focus {
+  outline: none;
+  border-color: var(--jelly-accent);
+}
+
+.organizer-content .media-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.season-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-lg);
+}
+
+.season-item > .season-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: var(--space-sm);
+}
+
+.episode-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  padding-left: var(--space-md);
+}
+
+.drop-zone {
+  background-color: var(--bg-primary);
+  border: 2px dashed var(--bg-tertiary);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--text-muted);
+  font-size: 0.9rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.drop-zone.filled {
+  background-color: #29364a;
+  border-style: solid;
+  border-color: var(--status-success);
+  color: var(--text-primary);
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}

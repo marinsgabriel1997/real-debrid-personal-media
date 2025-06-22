@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>RD Media Manager</title>
+    <link rel="stylesheet" href="styles/main.css" />
+  </head>
+  <body>
+    <div class="app-container">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="sidebar-logo">
+          <span class="logo-icon">⚡️</span>
+          <span>RD Media Manager</span>
+        </div>
+        <nav class="sidebar-nav">
+          <ul>
+            <li>
+              <a href="#" data-nav-to="management"
+                ><span class="icon">🗂️</span> Gerenciamento</a
+              >
+            </li>
+            <li>
+              <a href="#" data-nav-to="series"
+                ><span class="icon">📺</span> Séries</a
+              >
+            </li>
+            <li>
+              <a href="#" data-nav-to="movies"
+                ><span class="icon">🎬</span> Filmes</a
+              >
+            </li>
+            <li>
+              <a href="#" data-nav-to="cleanup"
+                ><span class="icon">🧹</span> Limpeza</a
+              >
+            </li>
+            <li>
+              <a href="#" data-nav-to="settings"
+                ><span class="icon">⚙️</span> Configurações</a
+              >
+            </li>
+          </ul>
+        </nav>
+        <div class="sidebar-footer">
+          <div class="api-status-badge">
+            <span class="api-status-text">API Desconectada</span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="main-content">
+        <div data-menu="management" data-menu-default>
+          <header class="main-header">
+            <input
+              type="search"
+              class="search-input"
+              placeholder="Pesquisar torrents, links, mídias..."
+            />
+            <div class="header-right"></div>
+          </header>
+          <h1 class="section-title">Gerenciamento de Mídia</h1>
+
+          <div class="management-view">
+            <!-- Left Panel: Queue & History -->
+            <div class="panel">
+              <div class="quick-actions">
+                <input
+                  type="text"
+                  class="action-input"
+                  placeholder="Cole um magnet ou link para desrestringir..."
+                />
+                <button class="action-button">Analisar e Adicionar</button>
+                <button id="sync-torrents-btn" class="action-button secondary">
+                  Sincronizar
+                </button>
+              </div>
+
+              <h2 class="panel-title">Fila & Histórico</h2>
+              <div class="torrent-list">
+                <!-- 
+                  <div class="torrent-item selected">
+                    <div class="name">
+                      The.Mandalorian.S03.COMPLETE.1080p.WEB-DL.DDP5.1.x265-NTb
+                    </div>
+                    <div class="status">Completo - 8 arquivos</div>
+                    <div class="file-list">
+                      <div class="file-item" draggable="true">
+                        🎬 The.Mandalorian.S03E01.mkv
+                      </div>
+                      <div class="file-item" draggable="true">
+                        🎬 The.Mandalorian.S03E02.mkv
+                      </div>
+                      <div class="file-item" draggable="true">
+                        🎬 The.Mandalorian.S03E03.mkv
+                      </div>
+                      <div class="file-item" draggable="true">... (e mais 5)</div>
+                    </div>
+                  </div>
+                  
+                  <div class="torrent-item">
+                    <div class="name">
+                      John.Wick.Chapter.4.2023.1080p.BluRay.x264-VETOR
+                    </div>
+                    <div class="status">Baixando (78%)</div>
+                  </div>
+                  
+                  <div class="torrent-item">
+                    <div class="name">
+                      Dune.Part.Two.2024.IMAX.2160p.WEB-DL.DDP5.1.Atmos.HDR.H.265-FLUX
+                    </div>
+                    <div class="status">Na fila</div>
+                  </div>
+                 -->
+              </div>
+            </div>
+
+            <!-- Right Panel: Organizer -->
+            <div class="panel">
+              <div class="organizer-content">
+                <div class="media-selector">
+                  <label class="panel-title" style="border: none; padding: 0"
+                    >1. Selecione o Tipo</label
+                  >
+                  <select id="media-type-select" class="media-select">
+                    <option value="series" selected>Série</option>
+                    <option value="movies">Filme</option>
+                  </select>
+
+                  <label
+                    class="panel-title"
+                    style="border: none; padding: 0; margin-top: 1rem"
+                    >2. Selecione a Coleção</label
+                  >
+                  <select
+                    name="media"
+                    id="media-select-input"
+                    class="media-select"
+                  >
+                    <option value="new" selected>Cadastrar Nova...</option>
+                  </select>
+                </div>
+
+                <!-- Organizador de SÉRIES (visível por padrão) -->
+                <div class="organizer-view" id="series-organizer">
+                  <div class="media-form" style="margin-top: 1rem">
+                    <input
+                      type="text"
+                      id="series-imdb-id-input"
+                      class="action-input"
+                      placeholder="IMDb ID da Série (ex: tt0944947)"
+                    />
+                    <input
+                      type="text"
+                      id="series-name-input"
+                      class="action-input"
+                      placeholder="Nome da Série (automático via IMDb)"
+                    />
+                    <button id="save-series-btn" class="action-button">
+                      Criar Série
+                    </button>
+                  </div>
+                  <ul class="season-list">
+                    <li class="season-item">
+                      <div class="season-title">Temporada 1</div>
+                      <ul class="episode-list">
+                        <li class="drop-zone">Arraste o Episódio 1 aqui</li>
+                      </ul>
+                    </li>
+                  </ul>
+                  <div class="add-season-container">
+                    <button id="add-season-btn" class="action-button secondary">
+                      Adicionar Temporada
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Organizador de FILMES (escondido por padrão) -->
+                <div
+                  class="organizer-view"
+                  id="movie-organizer"
+                  style="display: none"
+                >
+                  <div class="media-form" style="margin-top: 1rem">
+                    <input
+                      type="text"
+                      class="action-input"
+                      placeholder="Nome da Coleção (Ex: Franquia 007)"
+                    />
+                    <button class="action-button">
+                      Criar Coleção de Filmes
+                    </button>
+                  </div>
+                  <ul class="episode-list">
+                    <li class="drop-zone">Arraste o arquivo do Filme 1 aqui</li>
+                  </ul>
+                  <div class="add-season-container">
+                    <button id="add-movie-btn" class="action-button secondary">
+                      Adicionar Filme à Coleção
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Series Page -->
+        <div data-menu="series">
+          <header class="main-header">
+            <input
+              type="search"
+              class="search-input"
+              placeholder="Pesquisar em suas séries..."
+            />
+            <div class="header-right"></div>
+          </header>
+          <h1 class="section-title">Séries</h1>
+          <div class="media-grid">
+            <!-- 
+            <div class="media-card">
+              <img
+                src="https://image.tmdb.org/t/p/w400/p31rpgy9qK2tYls4a1Waf2LgS33.jpg"
+                alt="The Mandalorian Poster"
+              />
+              <div class="badge">Série</div>
+              <div class="status-icon">✓</div>
+            </div>
+            <div class="media-card">
+              <img
+                src="https://image.tmdb.org/t/p/w400/vHl21JtrplI1xG32K3y2b2lAha.jpg"
+                alt="Dune Poster"
+              />
+              <div class="badge">Filme</div>
+            </div>
+            <div class="media-card">
+              <img
+                src="https://image.tmdb.org/t/p/w400/vpxxx8SIsHcb3Sg2bCj2g57e0u2.jpg"
+                alt="John Wick Poster"
+              />
+              <div class="badge">Filme</div>
+              <div class="status-icon">✓</div>
+            </div>
+             -->
+          </div>
+        </div>
+
+        <!-- Movies Page -->
+        <div data-menu="movies">
+          <header class="main-header">
+            <input
+              type="search"
+              class="search-input"
+              placeholder="Pesquisar em seus filmes..."
+            />
+            <div class="header-right"></div>
+          </header>
+          <h1 class="section-title">Filmes</h1>
+          <p>Página de filmes em construção.</p>
+        </div>
+
+        <!-- Cleanup Page -->
+        <div data-menu="cleanup">
+          <h1 class="section-title">Limpeza</h1>
+          <p>Página de limpeza em construção.</p>
+        </div>
+
+        <!-- Settings Page -->
+        <div data-menu="settings">
+          <h1 class="section-title">Configurações</h1>
+
+          <!-- User Info Dashboard -->
+          <div class="settings-section">
+            <div class="panel-title-with-action">
+              <h2 class="panel-title">Painel do Usuário</h2>
+              <button id="force-user-check" class="action-button secondary">
+                Forçar Verificação
+              </button>
+            </div>
+            <div class="user-dashboard">
+              <div class="user-info-card">
+                <div class="user-avatar-container">
+                  <!-- Placeholder, a ser preenchido via JS -->
+                  <div class="user-profile"></div>
+                </div>
+                <div class="user-details">
+                  <p>
+                    <strong>Usuário:</strong>
+                    <span id="user-username">--</span>
+                  </p>
+                  <p>
+                    <strong>Tipo de Conta:</strong>
+                    <span id="user-type">--</span>
+                  </p>
+                  <p>
+                    <strong>Expira em:</strong>
+                    <span id="user-expiration">--</span>
+                  </p>
+                  <p>
+                    <strong>Pontos de Fidelidade:</strong>
+                    <span id="user-points">--</span>
+                  </p>
+                </div>
+              </div>
+              <div class="traffic-info">
+                <h3 class="panel-subtitle">Uso de Tráfego por Hoster</h3>
+                <div id="traffic-details-grid" class="traffic-grid">
+                  <!-- Detalhes do tráfego serão inseridos aqui via JS -->
+                  <p class="empty-state">
+                    Valide sua API para carregar os dados de tráfego.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- API Keys Configuration -->
+          <div class="settings-section">
+            <h2 class="panel-title">Configuração de APIs</h2>
+            <div class="form-grid">
+              <div class="form-group">
+                <label for="rd-api-key">API Key do Real-Debrid</label>
+                <div class="input-with-status">
+                  <input
+                    type="password"
+                    id="rd-api-key"
+                    class="action-input"
+                    placeholder="Cole sua API Key aqui"
+                    autocomplete="new-password"
+                  />
+                  <span
+                    id="api-status-indicator"
+                    class="api-status"
+                    title="Status da API"
+                  ></span>
+                </div>
+                <div class="button-group">
+                  <button id="save-rd-api-key" class="action-button">
+                    Salvar e Validar
+                  </button>
+                  <button
+                    id="remove-rd-api-key"
+                    class="action-button secondary"
+                  >
+                    Remover
+                  </button>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="tmdb-api-key">API Key do TMDB (Opcional)</label>
+                <input
+                  type="text"
+                  id="tmdb-api-key"
+                  class="action-input"
+                  placeholder="Para buscar pôsteres e metadados"
+                  autocomplete="new-password"
+                />
+                <div class="button-group">
+                  <button id="save-tmdb-api-key" class="action-button">
+                    Salvar
+                  </button>
+                  <button
+                    id="remove-tmdb-api-key"
+                    class="action-button secondary"
+                  >
+                    Remover
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Data Management -->
+          <div class="settings-section">
+            <h2 class="panel-title">Gerenciamento de Dados</h2>
+            <div class="actions-grid">
+              <button id="export-data-btn" class="action-button secondary">
+                Exportar Meus Dados
+              </button>
+              <button id="import-data-btn" class="action-button secondary">
+                Importar Backup
+              </button>
+              <input type="file" id="import-file-input" style="display: none" />
+              <button id="clear-data-btn" class="action-button danger">
+                Limpar Todos os Dados
+              </button>
+            </div>
+          </div>
+
+          <!-- About Section -->
+          <div class="settings-section">
+            <h2 class="panel-title">Sobre</h2>
+            <p>RD Media Manager <span id="app-version">v0.1.0-alpha</span></p>
+            <p>
+              Projeto de código aberto.
+              <a
+                href="https://github.com/seu-usuario/seu-repo"
+                target="_blank"
+                rel="noopener noreferrer"
+                >Visite o repositório</a
+              >.
+            </p>
+          </div>
+        </div>
+      </main>
+    </div>
+    <script type="module" src="src/main.js"></script>
+  </body>
+</html>
