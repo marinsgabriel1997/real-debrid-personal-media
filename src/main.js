@@ -4,10 +4,10 @@
  */
 
 import { initNavigation } from "./navigation.js";
-import { initSettings } from "./settings.js";
 import { initSidebar } from "./sidebar.js";
-import { initManagement } from "./management.js";
-import { initOrganizer } from "./organizer.js";
+
+// A inicialização dos módulos de página (management, settings, etc.)
+// agora é tratada dinamicamente pelo NavigationManager.
 
 /**
  * Inicializa a aplicação
@@ -15,26 +15,11 @@ import { initOrganizer } from "./organizer.js";
 function initApp() {
   console.log("🚀 Inicializando aplicação...");
 
-  // Inicializa o sistema de navegação
-  const navigation = initNavigation();
-  console.log("✅ Sistema de navegação inicializado:", navigation);
-
-  // Inicializa o módulo da sidebar
+  // Inicializa a sidebar, que é um componente global e persistente
   initSidebar();
 
-  // Inicializa o módulo de configurações
-  initSettings();
-
-  // Inicializa o módulo de gerenciamento
-  initManagement();
-
-  // Inicializa o módulo do organizador
-  initOrganizer();
-
-  // Aqui você pode inicializar outros módulos futuramente
-  // initAPI();
-  // initUI();
-  // etc...
+  // Inicializa o sistema de navegação, que cuidará da inicialização dos módulos de página
+  initNavigation();
 
   console.log("🎉 Aplicação inicializada com sucesso!");
 }

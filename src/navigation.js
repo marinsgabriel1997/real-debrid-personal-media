@@ -3,13 +3,27 @@
  * Responsável por gerenciar a navegação entre os diferentes menus da aplicação
  */
 
+import { initManagement } from "./management.js";
+import { initSettings } from "./settings.js";
+import { initApiExplorer } from "./api-explorer.js";
+
 const LAST_ACTIVE_MENU_KEY = "rdmm_lastActiveMenu";
+
+// Mapeia IDs de menu para suas funções de inicialização para carregamento sob demanda
+const moduleInitializers = {
+  management: initManagement,
+  settings: initSettings,
+  "api-explorer": initApiExplorer,
+  // Futuros módulos de página podem ser adicionados aqui
+  // series: initSeries,
+};
 
 class NavigationManager {
   constructor() {
     this.currentMenu = null;
     this.menuStack = [];
     this.menuElements = new Map();
+    this.initializedModules = new Set(); // Rastreia módulos já inicializados
 
     this.init();
   }
@@ -82,6 +96,9 @@ class NavigationManager {
       return;
     }
 
+    // Inicializa o módulo associado a este menu se for a primeira vez
+    this.initModule(menuId);
+
     // Adiciona menu atual ao stack se necessário
     if (addToStack && this.currentMenu) {
       this.menuStack.push(this.currentMenu);
@@ -117,6 +134,27 @@ class NavigationManager {
       localStorage.setItem(LAST_ACTIVE_MENU_KEY, menuId);
     } catch (error) {
       console.error("Falha ao salvar o menu ativo no localStorage:", error);
+    }
+  }
+
+  /**
+   * Inicializa um módulo sob demanda, garantindo que seja executado apenas uma vez.
+   * @param {string} menuId O ID do menu que corresponde ao módulo a ser inicializado.
+   */
+  initModule(menuId) {
+    if (this.initializedModules.has(menuId)) {
+      return; // Módulo já foi inicializado
+    }
+
+    const initializer = moduleInitializers[menuId];
+    if (typeof initializer === "function") {
+      try {
+        console.log(`🚀 Inicializando módulo "${menuId}"...`);
+        initializer();
+        this.initializedModules.add(menuId);
+      } catch (error) {
+        console.error(`❌ Erro ao inicializar o módulo "${menuId}":`, error);
+      }
     }
   }
 

@@ -1,8 +1,8 @@
 /**
  * Módulo para gerenciar a lógica do painel Organizador.
  */
-import { saveMediaLibrary, getMediaLibrary, getTmdbApiKey } from "./config.js";
-import { getMediaInfoFromTmdb } from "./api.js";
+import { saveMediaLibrary, getMediaLibrary, getOmdbApiKey } from "./config.js";
+import { getMediaInfoFromOmdb } from "./api.js";
 
 // Mantém o estado da biblioteca em memória para evitar leituras constantes do localStorage
 let seriesLibrary = getMediaLibrary("series") || {};
@@ -154,19 +154,19 @@ function initDragAndDrop() {
 async function handleImdbIdBlur() {
   const { seriesImdbIdInput, seriesNameInput } = getDOMElements();
   const imdbId = seriesImdbIdInput.value.trim();
-  const tmdbApiKey = getTmdbApiKey();
+  const omdbApiKey = getOmdbApiKey();
 
   if (!imdbId) return;
-  if (!tmdbApiKey) {
-    alert("Chave da API do TMDB não configurada. Preencha o nome manualmente.");
+  if (!omdbApiKey) {
+    console.warn(
+      "Chave da API do OMDb não configurada. Preencha o nome manualmente."
+    );
     return;
   }
 
   try {
-    const mediaInfo = await getMediaInfoFromTmdb(tmdbApiKey, imdbId);
-    // O nome da série vem em 'name' para TV e 'title' para filmes.
-    seriesNameInput.value =
-      mediaInfo.name || mediaInfo.title || "Nome não encontrado";
+    const mediaInfo = await getMediaInfoFromOmdb(omdbApiKey, imdbId);
+    seriesNameInput.value = mediaInfo.Title || "Nome não encontrado";
   } catch (error) {
     alert(`Não foi possível buscar o nome da série: ${error.message}`);
     seriesNameInput.value = ""; // Limpa para preenchimento manual

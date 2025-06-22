@@ -6,11 +6,11 @@ import {
   getRdApiKey,
   setRdApiKey,
   removeRdApiKey,
-  getTmdbApiKey,
-  setTmdbApiKey,
-  removeTmdbApiKey,
+  getOmdbApiKey,
+  setOmdbApiKey,
+  removeOmdbApiKey,
 } from "./config.js";
-import { validateApiKey, getTraffic, validateTmdbApiKey } from "./api.js";
+import { validateApiKey, getTraffic, getMediaInfoFromOmdb } from "./api.js";
 import { updateSidebarApiStatus } from "./sidebar.js";
 
 /**
@@ -33,10 +33,10 @@ function getDOMElements() {
     importBtn: document.getElementById("import-data-btn"),
     importInput: document.getElementById("import-file-input"),
     clearBtn: document.getElementById("clear-data-btn"),
-    // TMDB elements
-    tmdbApiKeyInput: document.getElementById("tmdb-api-key"),
-    saveTmdbApiKeyBtn: document.getElementById("save-tmdb-api-key"),
-    removeTmdbApiKeyBtn: document.getElementById("remove-tmdb-api-key"),
+    // OMDb elements
+    omdbApiKeyInput: document.getElementById("omdb-api-key"),
+    saveOmdbApiKeyBtn: document.getElementById("save-omdb-api-key"),
+    removeOmdbApiKeyBtn: document.getElementById("remove-omdb-api-key"),
   };
 }
 
@@ -183,7 +183,7 @@ async function fetchAndDisplayData(apiKey) {
  * @param {boolean} [forceRefresh=false] - Se true, ignora o cache e busca os dados da API.
  */
 async function loadAndDisplayInitialData(forceRefresh = false) {
-  const { rdApiKeyInput, tmdbApiKeyInput } = getDOMElements();
+  const { rdApiKeyInput, omdbApiKeyInput } = getDOMElements();
 
   // Carrega chave do Real-Debrid
   const rdApiKey = getRdApiKey();
@@ -228,12 +228,12 @@ async function loadAndDisplayInitialData(forceRefresh = false) {
     }
   }
 
-  // Carrega chave do TMDB
-  const tmdbApiKey = getTmdbApiKey();
-  if (tmdbApiKey) {
-    tmdbApiKeyInput.value = tmdbApiKey;
+  // Carrega chave do OMDb
+  const omdbApiKey = getOmdbApiKey();
+  if (omdbApiKey) {
+    omdbApiKeyInput.value = omdbApiKey;
   } else {
-    tmdbApiKeyInput.value = "";
+    omdbApiKeyInput.value = "";
   }
 }
 
@@ -284,36 +284,41 @@ function handleRemoveApiKey() {
 }
 
 /**
- * Manipula o clique no botão de salvar API key do TMDB.
+ * Manipula o clique no botão de salvar API key do OMDb.
  */
-async function handleSaveTmdbApiKey() {
-  const { tmdbApiKeyInput } = getDOMElements();
-  const apiKey = tmdbApiKeyInput.value.trim();
+async function handleSaveOmdbApiKey() {
+  const { omdbApiKeyInput } = getDOMElements();
+  const apiKey = omdbApiKeyInput.value.trim();
 
   if (!apiKey) {
-    alert("Por favor, insira uma API Key do TMDB para salvar.");
+    alert("Por favor, insira uma API Key do OMDb para salvar.");
     return;
   }
 
-  // Adicionar um feedback de loading seria uma boa melhoria futura.
+  // Mostra um feedback visual (opcional, mas bom para UX)
+  omdbApiKeyInput.style.borderColor = "#f39c12"; // Laranja para "loading"
+
   try {
-    await validateTmdbApiKey(apiKey);
-    setTmdbApiKey(apiKey);
-    alert("API Key do TMDB válida e salva com sucesso!");
+    // Valida a chave fazendo uma busca de teste
+    await getMediaInfoFromOmdb(apiKey, "tt1375666"); // "A Origem" como teste
+    setOmdbApiKey(apiKey);
+    omdbApiKeyInput.style.borderColor = "#2ecc71"; // Verde para "sucesso"
+    alert("API Key do OMDb válida e salva com sucesso!");
   } catch (error) {
-    alert(`Erro ao validar a API Key do TMDB: ${error.message}`);
-    // Mantemos a chave no input para que o usuário possa corrigir.
+    omdbApiKeyInput.style.borderColor = "#e74c3c"; // Vermelho para "erro"
+    alert(`Erro ao validar a API Key do OMDb: ${error.message}`);
   }
 }
 
 /**
- * Manipula a remoção da API key do TMDB.
+ * Manipula a remoção da API key do OMDb.
  */
-function handleRemoveTmdbApiKey() {
-  const { tmdbApiKeyInput } = getDOMElements();
-  removeTmdbApiKey();
-  tmdbApiKeyInput.value = "";
-  alert("API Key do TMDB removida com sucesso.");
+function handleRemoveOmdbApiKey() {
+  const { omdbApiKeyInput } = getDOMElements();
+  removeOmdbApiKey();
+  omdbApiKeyInput.value = "";
+  omdbApiKeyInput.style.borderColor = ""; // Reseta a borda
+  alert("API Key do OMDb removida com sucesso.");
 }
 
 /**
@@ -401,11 +406,11 @@ export function initSettings() {
     loadAndDisplayInitialData(true)
   );
 
-  // Listeners do TMDB
-  elements.saveTmdbApiKeyBtn.addEventListener("click", handleSaveTmdbApiKey);
-  elements.removeTmdbApiKeyBtn.addEventListener(
+  // Listeners do OMDb
+  elements.saveOmdbApiKeyBtn.addEventListener("click", handleSaveOmdbApiKey);
+  elements.removeOmdbApiKeyBtn.addEventListener(
     "click",
-    handleRemoveTmdbApiKey
+    handleRemoveOmdbApiKey
   );
 
   // Listeners de Gerenciamento de Dados

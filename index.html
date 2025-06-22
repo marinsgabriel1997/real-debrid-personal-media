@@ -41,6 +41,11 @@
                 ><span class="icon">⚙️</span> Configurações</a
               >
             </li>
+            <li>
+              <a href="#" data-nav-to="api-explorer"
+                ><span class="icon">🔬</span> API Explorer</a
+              >
+            </li>
           </ul>
         </nav>
         <div class="sidebar-footer">
@@ -54,11 +59,6 @@
       <main class="main-content">
         <div data-menu="management" data-menu-default>
           <header class="main-header">
-            <input
-              type="search"
-              class="search-input"
-              placeholder="Pesquisar torrents, links, mídias..."
-            />
             <div class="header-right"></div>
           </header>
           <h1 class="section-title">Gerenciamento de Mídia</h1>
@@ -79,6 +79,23 @@
               </div>
 
               <h2 class="panel-title">Fila & Histórico</h2>
+
+              <!-- Campo de filtro/pesquisa para torrents -->
+              <div class="filter-section">
+                <input
+                  type="search"
+                  id="torrent-filter-input"
+                  class="action-input"
+                  placeholder="Filtrar por nome de arquivo (ex: S01E05, 1080p, mkv)..."
+                />
+                <div class="filter-options">
+                  <label class="checkbox-label">
+                    <input type="checkbox" id="video-only-checkbox" checked />
+                    <span class="checkbox-text">Mostrar somente vídeos</span>
+                  </label>
+                </div>
+              </div>
+
               <div class="torrent-list">
                 <!-- 
                   <div class="torrent-item selected">
@@ -164,7 +181,15 @@
                   </div>
                   <ul class="season-list">
                     <li class="season-item">
-                      <div class="season-title">Temporada 1</div>
+                      <div class="season-header">
+                        <div class="season-title">Temporada 1</div>
+                        <button
+                          class="remove-season-btn"
+                          title="Remover temporada"
+                        >
+                          🗑️
+                        </button>
+                      </div>
                       <ul class="episode-list">
                         <li class="drop-zone">Arraste o Episódio 1 aqui</li>
                       </ul>
@@ -349,20 +374,20 @@
                 </div>
               </div>
               <div class="form-group">
-                <label for="tmdb-api-key">API Key do TMDB (Opcional)</label>
+                <label for="omdb-api-key">API Key do OMDb (Opcional)</label>
                 <input
-                  type="text"
-                  id="tmdb-api-key"
+                  type="password"
+                  id="omdb-api-key"
                   class="action-input"
-                  placeholder="Para buscar pôsteres e metadados"
+                  placeholder="Para buscar metadados"
                   autocomplete="new-password"
                 />
                 <div class="button-group">
-                  <button id="save-tmdb-api-key" class="action-button">
+                  <button id="save-omdb-api-key" class="action-button">
                     Salvar
                   </button>
                   <button
-                    id="remove-tmdb-api-key"
+                    id="remove-omdb-api-key"
                     class="action-button secondary"
                   >
                     Remover
@@ -402,6 +427,150 @@
                 >Visite o repositório</a
               >.
             </p>
+          </div>
+        </div>
+
+        <!-- API Explorer Page -->
+        <div data-menu="api-explorer">
+          <h1 class="section-title">API Explorer</h1>
+          <p>
+            Ferramenta para interagir diretamente com a API do Real-Debrid.
+            Selecione um endpoint, ajuste os parâmetros no caminho e envie.
+          </p>
+
+          <div class="management-view">
+            <!-- Left Panel: Request Builder -->
+            <div class="panel">
+              <h2 class="panel-title">Construtor de Requisição</h2>
+
+              <div class="form-group">
+                <label for="api-endpoint-select">Selecionar Endpoint</label>
+                <select id="api-endpoint-select" class="media-select">
+                  <option value="" selected disabled>
+                    Escolha um endpoint...
+                  </option>
+                  <option data-method="GET" value="/time">GET /time</option>
+                  <option data-method="GET" value="/time/iso">
+                    GET /time/iso
+                  </option>
+                  <option data-method="GET" value="/user">GET /user</option>
+                  <option data-method="POST" value="/unrestrict/check">
+                    POST /unrestrict/check
+                  </option>
+                  <option data-method="POST" value="/unrestrict/link">
+                    POST /unrestrict/link
+                  </option>
+                  <option data-method="POST" value="/unrestrict/folder">
+                    POST /unrestrict/folder
+                  </option>
+                  <option data-method="PUT" value="/unrestrict/containerFile">
+                    PUT /unrestrict/containerFile
+                  </option>
+                  <option data-method="POST" value="/unrestrict/containerLink">
+                    POST /unrestrict/containerLink
+                  </option>
+                  <option data-method="GET" value="/traffic">
+                    GET /traffic
+                  </option>
+                  <option
+                    data-method="GET"
+                    value="/traffic/details?start=YYYY-MM-DD"
+                  >
+                    GET /traffic/details
+                  </option>
+                  <option data-method="GET" value="/streaming/transcode/{id}">
+                    GET /streaming/transcode/{id}
+                  </option>
+                  <option data-method="GET" value="/streaming/mediaInfos/{id}">
+                    GET /streaming/mediaInfos/{id}
+                  </option>
+                  <option data-method="GET" value="/downloads">
+                    GET /downloads
+                  </option>
+                  <option data-method="DELETE" value="/downloads/delete/{id}">
+                    DELETE /downloads/delete/{id}
+                  </option>
+                  <option data-method="GET" value="/torrents">
+                    GET /torrents
+                  </option>
+                  <option data-method="GET" value="/torrents/info/{id}">
+                    GET /torrents/info/{id}
+                  </option>
+                  <option data-method="GET" value="/torrents/activeCount">
+                    GET /torrents/activeCount
+                  </option>
+                  <option data-method="GET" value="/torrents/availableHosts">
+                    GET /torrents/availableHosts
+                  </option>
+                  <option data-method="PUT" value="/torrents/addTorrent">
+                    PUT /torrents/addTorrent
+                  </option>
+                  <option data-method="GET" value="/disable_access_token">
+                    GET /disable_access_token
+                  </option>
+                </select>
+              </div>
+
+              <div
+                class="form-grid"
+                style="
+                  grid-template-columns: 100px 1fr;
+                  gap: 1rem;
+                  align-items: flex-end;
+                "
+              >
+                <div class="form-group">
+                  <label for="api-method-select">Método</label>
+                  <select id="api-method-select" class="media-select">
+                    <option>GET</option>
+                    <option>POST</option>
+                    <option>PUT</option>
+                    <option>DELETE</option>
+                  </select>
+                </div>
+                <div class="form-group" style="flex-grow: 1">
+                  <label for="api-path-input">Caminho do Endpoint</label>
+                  <input
+                    type="text"
+                    id="api-path-input"
+                    class="action-input"
+                    placeholder="/exemplo/recurso"
+                  />
+                </div>
+              </div>
+
+              <div
+                class="form-group"
+                id="api-body-container"
+                style="display: none"
+              >
+                <label for="api-body-textarea"
+                  >Corpo da Requisição (JSON)</label
+                >
+                <textarea
+                  id="api-body-textarea"
+                  class="action-input"
+                  rows="5"
+                  placeholder='{&#10;  "chave": "valor"&#10;}'
+                ></textarea>
+              </div>
+
+              <button
+                id="send-api-request-btn"
+                class="action-button"
+                style="margin-top: 1rem; width: 100%"
+              >
+                Fazer Requisição
+              </button>
+            </div>
+
+            <!-- Right Panel: Response -->
+            <div class="panel">
+              <h2 class="panel-title">Resposta da API</h2>
+              <div class="api-response-content">
+                <pre><code id="api-response-output" class="language-json" style="white-space: pre-wrap; word-break: break-all;">Aguardando requisição...</code></pre>
+              </div>
+            </div>
           </div>
         </div>
       </main>

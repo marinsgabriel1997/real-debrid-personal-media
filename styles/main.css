@@ -42,6 +42,81 @@
   padding-bottom: var(--space-md);
 }
 
+/* Seção de filtro de torrents */
+.filter-section {
+  margin-top: var(--space-md);
+  margin-bottom: var(--space-lg);
+}
+
+.filter-section .action-input {
+  background-color: var(--bg-primary);
+  border: 1px solid var(--bg-tertiary);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filter-section .action-input:focus {
+  border-color: var(--jelly-accent);
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.1);
+}
+
+.filter-section .action-input::placeholder {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.filter-options {
+  margin-top: var(--space-md);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+}
+
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  user-select: none;
+}
+
+.checkbox-label input[type="checkbox"] {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 2px solid var(--bg-tertiary);
+  border-radius: var(--radius-sm);
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+}
+
+.checkbox-label input[type="checkbox"]:checked {
+  background-color: var(--jelly-accent);
+  border-color: var(--jelly-accent);
+}
+
+.checkbox-label input[type="checkbox"]:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.checkbox-label:hover input[type="checkbox"] {
+  border-color: var(--jelly-accent);
+}
+
+.checkbox-text {
+  font-weight: 500;
+}
+
 .quick-actions {
   border-bottom: 1px solid var(--bg-tertiary);
   padding-bottom: var(--space-lg);
@@ -100,6 +175,102 @@
   align-items: center;
   gap: var(--space-sm);
   cursor: grab;
+}
+
+/* Nova estrutura de lista plana de arquivos */
+.file-item-row {
+  background-color: var(--bg-tertiary);
+  padding: var(--space-lg) var(--space-md);
+  border-radius: var(--radius-md);
+  cursor: grab;
+  border-left: 4px solid transparent;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+}
+
+.file-item-row:hover {
+  background-color: #3f4e63;
+  border-left-color: var(--jelly-accent);
+}
+
+.file-item-row.dragging {
+  opacity: 0.6;
+  transform: rotate(2deg);
+}
+
+.file-info {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  flex-grow: 1;
+  min-width: 0; /* Para permitir text-overflow */
+}
+
+.file-icon {
+  font-size: 1.5rem;
+  flex-shrink: 0;
+}
+
+.file-details {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.file-name {
+  font-weight: 500;
+  font-size: 1rem;
+  color: var(--text-primary);
+  word-break: break-word;
+  line-height: 1.4;
+  margin-bottom: var(--space-xs);
+}
+
+.file-source {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.file-status {
+  padding: 0.3rem 0.8rem;
+  border-radius: var(--radius-full);
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+  align-self: flex-start;
+}
+
+.file-status.status-complete {
+  background-color: var(--status-success);
+  color: white;
+}
+
+.file-status.status-downloading {
+  background-color: var(--jelly-accent);
+  color: white;
+}
+
+.file-status.status-queued {
+  background-color: var(--text-muted);
+  color: white;
+}
+
+.file-status.status-error {
+  background-color: var(--status-error);
+  color: white;
+}
+
+.file-status.status-default {
+  background-color: var(--bg-primary);
+  color: var(--text-secondary);
+  border: 1px solid var(--bg-tertiary);
 }
 
 .organizer-placeholder {
@@ -165,6 +336,49 @@
   margin-bottom: var(--space-sm);
 }
 
+.season-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-md);
+  border-left: 4px solid var(--jelly-accent);
+}
+
+.season-header .season-title {
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  color: var(--text-primary);
+}
+
+.remove-season-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: var(--radius-md);
+  padding: 0.4rem 0.6rem;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--space-xs);
+}
+
+.remove-season-btn:hover {
+  background: var(--status-error);
+  border-color: var(--status-error);
+  color: white;
+  transform: scale(1.05);
+}
+
+.remove-season-btn:active {
+  transform: scale(0.95);
+}
+
 .episode-list {
   list-style: none;
   display: flex;
@@ -193,6 +407,95 @@
   display: flex;
   align-items: center;
   gap: var(--space-sm);
+}
+
+/* Estilos para drag and drop do organizador */
+.drop-zone.drag-over {
+  background-color: var(--jelly-accent);
+  border-color: var(--jelly-accent);
+  color: white;
+  transform: scale(1.02);
+}
+
+.filled-drop-zone {
+  background-color: #29364a;
+  border: 2px solid var(--status-success);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  cursor: grab;
+  transition: all 0.2s ease;
+}
+
+.filled-drop-zone:hover {
+  background-color: #334455;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.filled-drop-zone.dragging {
+  opacity: 0.6;
+  transform: rotate(2deg) scale(0.95);
+}
+
+.filled-drop-zone.drag-over {
+  background-color: var(--jelly-accent);
+  border-color: var(--jelly-accent);
+  color: white;
+  transform: scale(1.05);
+}
+
+.dropped-file {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  width: 100%;
+}
+
+.dropped-file .file-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.dropped-file .file-name {
+  flex-grow: 1;
+  font-weight: 500;
+  word-break: break-word;
+  line-height: 1.3;
+}
+
+.remove-file-btn {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  font-weight: bold;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.remove-file-btn:hover {
+  background: var(--status-error);
+  border-color: var(--status-error);
+  color: white;
+  transform: scale(1.1);
+}
+
+/* Visual feedback for dragging from file list */
+.file-item-row.dragging {
+  opacity: 0.6;
+  transform: rotate(2deg) scale(0.95);
+  z-index: 1000;
 }
 
 /* --- Media Grid (Séries View) --- */
@@ -485,4 +788,53 @@
   display: flex;
   gap: var(--space-md);
   align-items: center;
+}
+
+/* --- API Explorer Styles --- */
+.api-response-content {
+  background-color: var(--bg-primary);
+  border-radius: var(--radius-md);
+  padding: var(--space-md);
+  overflow: auto;
+  flex-grow: 1;
+  min-height: 300px;
+  max-height: 600px;
+}
+
+.api-response-content pre {
+  margin: 0;
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.api-response-content code {
+  color: var(--text-primary);
+  background: none;
+  padding: 0;
+  border-radius: 0;
+  font-family: inherit;
+}
+
+#api-body-textarea {
+  font-family: "Monaco", "Menlo", "Ubuntu Mono", monospace;
+  font-size: 0.875rem;
+  resize: vertical;
+  min-height: 120px;
+}
+
+.api-explorer .form-grid {
+  grid-template-columns: 100px 1fr;
+  gap: var(--space-md);
+  align-items: flex-end;
+}
+
+.api-explorer .form-group {
+  margin-bottom: var(--space-md);
+}
+
+.api-explorer .panel {
+  min-height: 400px;
 }

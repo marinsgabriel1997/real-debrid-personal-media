@@ -1,6 +1,6 @@
 const CONFIG_KEYS = {
   RD_API_KEY: "rd_api_key",
-  TMDB_API_KEY: "tmdb_api_key",
+  OMDB_API_KEY: "omdb_api_key",
   TORRENT_DATA_PREFIX: "rd_torrent_",
   SERIES_LIBRARY: "rd_series_library",
   MOVIE_LIBRARY: "rd_movie_library",
@@ -91,26 +91,26 @@ export function removeRdApiKey() {
 }
 
 /**
- * Busca a API Key do TMDB do localStorage.
+ * Busca a API Key do OMDb do localStorage.
  * @returns {string|null} A chave da API, ou null se não estiver definida.
  */
-export function getTmdbApiKey() {
-  return localStorage.getItem(CONFIG_KEYS.TMDB_API_KEY);
+export function getOmdbApiKey() {
+  return localStorage.getItem(CONFIG_KEYS.OMDB_API_KEY);
 }
 
 /**
- * Salva a API Key do TMDB no localStorage.
+ * Salva a API Key do OMDb no localStorage.
  * @param {string} apiKey A chave da API a ser salva.
  */
-export function setTmdbApiKey(apiKey) {
-  localStorage.setItem(CONFIG_KEYS.TMDB_API_KEY, apiKey);
+export function setOmdbApiKey(apiKey) {
+  localStorage.setItem(CONFIG_KEYS.OMDB_API_KEY, apiKey);
 }
 
 /**
- * Remove a API Key do TMDB do localStorage.
+ * Remove a API Key do OMDb do localStorage.
  */
-export function removeTmdbApiKey() {
-  localStorage.removeItem(CONFIG_KEYS.TMDB_API_KEY);
+export function removeOmdbApiKey() {
+  localStorage.removeItem(CONFIG_KEYS.OMDB_API_KEY);
 }
 
 /**

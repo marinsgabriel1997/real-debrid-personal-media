@@ -616,67 +616,32 @@ export async function deleteAvatar(apiKey) {
 }
 
 /**
- * Valida a chave de API do TMDB.
- * @param {string} apiKey - A chave de API do TMDB.
- * @returns {Promise<boolean>} Retorna true se a chave for válida.
- * @throws {Error} Lança um erro se a chave for inválida.
- */
-export async function validateTmdbApiKey(apiKey) {
-  if (!apiKey) {
-    throw new Error("O parâmetro 'apiKey' é obrigatório.");
-  }
-
-  const url = `https://api.themoviedb.org/3/configuration?api_key=${apiKey}`;
-  const response = await fetch(url);
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      const errorData = await response.json();
-      throw new Error(
-        `API Key do TMDB inválida: ${
-          errorData.status_message || "Não autorizado"
-        }`
-      );
-    }
-    throw new Error(
-      `Erro ao validar a API Key do TMDB: ${response.statusText}`
-    );
-  }
-
-  // A resposta de sucesso (200 OK) indica que a chave é válida.
-  return true;
-}
-
-/**
- * Busca informações de uma mídia no TMDB usando um ID externo (IMDb).
- * @param {string} tmdbApiKey A chave da API do TMDB.
+ * Busca informações de uma mídia no OMDb usando um ID externo (IMDb).
+ * @param {string} omdbApiKey A chave da API do OMDb.
  * @param {string} imdbId O IMDb ID da mídia (ex: tt0944947).
- * @returns {Promise<object>} O primeiro resultado encontrado para a busca.
+ * @returns {Promise<object>} O resultado da busca.
  */
-export async function getMediaInfoFromTmdb(tmdbApiKey, imdbId) {
-  if (!tmdbApiKey) {
-    throw new Error("A chave da API do TMDB é obrigatória.");
+export async function getMediaInfoFromOmdb(omdbApiKey, imdbId) {
+  if (!omdbApiKey) {
+    throw new Error("A chave da API do OMDb é obrigatória.");
   }
   if (!imdbId) {
     throw new Error("O IMDb ID é obrigatório.");
   }
 
-  const url = `https://api.themoviedb.org/3/find/${imdbId}?api_key=${tmdbApiKey}&external_source=imdb_id&language=pt-BR`;
+  const url = `https://www.omdbapi.com/?apikey=${omdbApiKey}&i=${imdbId}`;
 
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Erro ao buscar dados no TMDB: ${response.statusText}`);
+    throw new Error(`Erro ao buscar dados no OMDb: ${response.statusText}`);
   }
 
   const data = await response.json();
 
-  // A API de 'find' retorna resultados em arrays por tipo de mídia
-  const results = [...(data.tv_results || []), ...(data.movie_results || [])];
-
-  if (results.length === 0) {
-    throw new Error("Nenhuma mídia encontrada no TMDB com este IMDb ID.");
+  if (data.Response === "False") {
+    throw new Error(data.Error || "Mídia não encontrada no OMDb.");
   }
 
-  return results[0]; // Retorna o primeiro resultado correspondente
+  return data;
 }
