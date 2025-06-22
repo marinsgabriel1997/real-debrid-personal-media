@@ -4,10 +4,9 @@
  */
 
 import { initNavigation } from "./navigation.js";
-import { initSidebar } from "./sidebar.js";
 
 // A inicialização dos módulos de página (management, settings, etc.)
-// agora é tratada dinamicamente pelo NavigationManager.
+// e da sidebar agora é tratada dinamicamente pelo NavigationManager.
 
 /**
  * Inicializa a aplicação
@@ -15,10 +14,7 @@ import { initSidebar } from "./sidebar.js";
 function initApp() {
   console.log("🚀 Inicializando aplicação...");
 
-  // Inicializa a sidebar, que é um componente global e persistente
-  initSidebar();
-
-  // Inicializa o sistema de navegação, que cuidará da inicialização dos módulos de página
+  // Inicializa o sistema de navegação, que cuidará do resto
   initNavigation();
 
   console.log("🎉 Aplicação inicializada com sucesso!");

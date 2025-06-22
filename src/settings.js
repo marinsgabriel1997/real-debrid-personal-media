@@ -9,9 +9,14 @@ import {
   getOmdbApiKey,
   setOmdbApiKey,
   removeOmdbApiKey,
+  getUserData,
+  removeUserData,
+  getTrafficData,
+  saveTrafficData,
+  removeTrafficData,
 } from "./config.js";
-import { validateApiKey, getTraffic, getMediaInfoFromOmdb } from "./api.js";
-import { updateSidebarApiStatus } from "./sidebar.js";
+import { getTraffic, getMediaInfoFromOmdb } from "./api.js";
+import { forceCheckApiStatus, updateApiStatus } from "./navigation.js";
 
 /**
  * Agrupa a busca por elementos do DOM para fácil manutenção.
@@ -23,7 +28,6 @@ function getDOMElements() {
     saveRdApiKeyBtn: document.getElementById("save-rd-api-key"),
     removeRdApiKeyBtn: document.getElementById("remove-rd-api-key"),
     forceUserCheckBtn: document.getElementById("force-user-check"),
-    apiStatusIndicator: document.getElementById("api-status-indicator"),
     usernameSpan: document.getElementById("user-username"),
     userTypeSpan: document.getElementById("user-type"),
     userExpirationSpan: document.getElementById("user-expiration"),
@@ -38,36 +42,6 @@ function getDOMElements() {
     saveOmdbApiKeyBtn: document.getElementById("save-omdb-api-key"),
     removeOmdbApiKeyBtn: document.getElementById("remove-omdb-api-key"),
   };
-}
-
-/**
- * Atualiza o indicador visual de status da API.
- * @param {'ok'|'error'|'loading'|'none'} status O status a ser exibido.
- */
-function updateApiStatus(status) {
-  const { apiStatusIndicator } = getDOMElements();
-  apiStatusIndicator.className = "api-status"; // Reseta as classes
-  apiStatusIndicator.title = `Status da API: ${status}`;
-  if (status !== "none") {
-    apiStatusIndicator.classList.add(status);
-  }
-
-  // Atualiza também o status na sidebar
-  switch (status) {
-    case "ok":
-      updateSidebarApiStatus("connected");
-      break;
-    case "loading":
-      updateSidebarApiStatus("loading");
-      break;
-    case "error":
-      updateSidebarApiStatus("error");
-      break;
-    case "none":
-    default:
-      updateSidebarApiStatus("disconnected");
-      break;
-  }
 }
 
 /**
@@ -151,82 +125,53 @@ function displayTrafficData(trafficData) {
 }
 
 /**
- * Busca os dados da API, exibe na tela e armazena em cache.
- * @param {string} apiKey A chave de API do Real-Debrid.
- * @returns {Promise<void>}
+ * Busca e exibe os dados de tráfego.
+ * @param {string} apiKey
  */
-async function fetchAndDisplayData(apiKey) {
-  updateApiStatus("loading");
+async function fetchAndDisplayTraffic(apiKey) {
   try {
-    const userData = await validateApiKey(apiKey);
     const trafficData = await getTraffic(apiKey);
-
-    localStorage.setItem("rdUserData", JSON.stringify(userData));
-    localStorage.setItem("rdTrafficData", JSON.stringify(trafficData));
-
-    displayUserData(userData);
     displayTrafficData(trafficData);
-    updateApiStatus("ok");
+    saveTrafficData(trafficData); // Salva os dados no cache
   } catch (error) {
-    updateApiStatus("error");
-    clearUserData();
-    localStorage.removeItem("rdUserData");
-    localStorage.removeItem("rdTrafficData");
-    console.error("Falha ao carregar dados do usuário:", error);
-    // Propaga o erro para que os chamadores possam lidar com ele (ex: no save).
-    throw error;
+    console.error("Falha ao carregar dados de tráfego:", error);
+    const { trafficGrid } = getDOMElements();
+    trafficGrid.innerHTML =
+      '<p class="empty-state text-danger">Erro ao carregar dados de tráfego.</p>';
   }
 }
 
 /**
- * Carrega e exibe os dados do usuário se uma API key válida existir.
- * @param {boolean} [forceRefresh=false] - Se true, ignora o cache e busca os dados da API.
+ * Carrega e exibe os dados iniciais, usando o cache se disponível.
+ * @param {boolean} [forceRefresh=false] - Força a atualização dos dados de tráfego.
  */
-async function loadAndDisplayInitialData(forceRefresh = false) {
+function loadAndDisplayInitialData(forceRefresh = false) {
   const { rdApiKeyInput, omdbApiKeyInput } = getDOMElements();
-
-  // Carrega chave do Real-Debrid
   const rdApiKey = getRdApiKey();
-  if (!rdApiKey) {
-    clearUserData();
-    updateApiStatus("none");
-    rdApiKeyInput.value = "";
-  } else {
-    rdApiKeyInput.value = rdApiKey;
+  rdApiKeyInput.value = rdApiKey || "";
 
-    const cachedUserData = JSON.parse(localStorage.getItem("rdUserData"));
-    const isUserDataExpired = cachedUserData
-      ? new Date(cachedUserData.expiration) < new Date()
-      : true;
+  const userData = getUserData();
 
-    if (cachedUserData && !isUserDataExpired && !forceRefresh) {
-      console.log("Usando dados de usuário e tráfego do cache.");
-      const cachedTrafficData = JSON.parse(
-        localStorage.getItem("rdTrafficData")
-      );
-
-      displayUserData(cachedUserData);
-      if (cachedTrafficData) {
-        displayTrafficData(cachedTrafficData);
-      } else {
-        // Se por algum motivo os dados de tráfego não estiverem em cache, busca-os.
-        getTraffic(rdApiKey).then((trafficData) => {
-          displayTrafficData(trafficData);
-          localStorage.setItem("rdTrafficData", JSON.stringify(trafficData));
-        });
-      }
-      updateApiStatus("ok");
+  if (userData) {
+    displayUserData(userData);
+    const cachedTraffic = getTrafficData();
+    if (cachedTraffic && !forceRefresh) {
+      console.log("Usando dados de tráfego do cache.");
+      displayTrafficData(cachedTraffic);
     } else {
       console.log(
         forceRefresh
-          ? "Forçando atualização dos dados."
-          : "Cache inválido ou expirado. Buscando novos dados."
+          ? "Forçando atualização dos dados de tráfego."
+          : "Cache de tráfego vazio. Buscando novos dados."
       );
-      await fetchAndDisplayData(rdApiKey).catch(() => {
-        // O erro já é tratado e logado dentro de fetchAndDisplayData
-      });
+      fetchAndDisplayTraffic(rdApiKey);
     }
+  } else {
+    clearUserData();
   }
+
+  // Atualiza o status da API na sidebar (ele decidirá se precisa de fetch)
+  updateApiStatus();
 
   // Carrega chave do OMDb
   const omdbApiKey = getOmdbApiKey();
@@ -249,18 +194,20 @@ async function handleSaveApiKey() {
     return;
   }
 
-  updateApiStatus("loading");
+  // Define a chave temporariamente para que a verificação possa usá-la
+  setRdApiKey(apiKey);
 
-  try {
-    // A função fetchAndDisplayData já valida, busca, exibe e armazena em cache.
-    await fetchAndDisplayData(apiKey);
-    setRdApiKey(apiKey);
+  const isValid = await forceCheckApiStatus();
+
+  if (isValid) {
     alert("API Key válida e salva com sucesso!");
-  } catch (error) {
-    updateApiStatus("error");
-    alert(`Erro ao validar a API Key: ${error.message}`);
-    removeRdApiKey(); // Limpa a chave da configuração
-    clearUserData(); // Limpa a tela
+    // Recarrega os dados na tela com base na nova chave
+    loadAndDisplayInitialData();
+  } else {
+    alert(`Erro ao validar a API Key. Verifique se a chave está correta.`);
+    // A chave inválida já foi removida do storage pela forceCheckApiStatus
+    rdApiKeyInput.value = "";
+    clearUserData();
   }
 }
 
@@ -274,12 +221,12 @@ function handleRemoveApiKey() {
 
   const { rdApiKeyInput } = getDOMElements();
   removeRdApiKey();
-  localStorage.removeItem("rdUserData");
-  localStorage.removeItem("rdTrafficData");
+  removeUserData();
+  removeTrafficData();
 
   rdApiKeyInput.value = "";
   clearUserData();
-  updateApiStatus("none");
+  updateApiStatus(); // Atualiza o status para desconectado
   alert("API Key removida com sucesso.");
 }
 
@@ -402,9 +349,12 @@ export function initSettings() {
   // Listeners do Real-Debrid
   elements.saveRdApiKeyBtn.addEventListener("click", handleSaveApiKey);
   elements.removeRdApiKeyBtn.addEventListener("click", handleRemoveApiKey);
-  elements.forceUserCheckBtn.addEventListener("click", () =>
-    loadAndDisplayInitialData(true)
-  );
+  elements.forceUserCheckBtn.addEventListener("click", async () => {
+    const isValid = await forceCheckApiStatus();
+    if (isValid) {
+      loadAndDisplayInitialData(true); // Força a atualização do tráfego
+    }
+  });
 
   // Listeners do OMDb
   elements.saveOmdbApiKeyBtn.addEventListener("click", handleSaveOmdbApiKey);

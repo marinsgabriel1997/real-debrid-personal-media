@@ -6,6 +6,14 @@
 import { initManagement } from "./management.js";
 import { initSettings } from "./settings.js";
 import { initApiExplorer } from "./api-explorer.js";
+import {
+  getRdApiKey,
+  getUserData,
+  saveUserData,
+  removeUserData,
+  removeTrafficData,
+} from "./config.js";
+import { getUser } from "./api.js";
 
 const LAST_ACTIVE_MENU_KEY = "rdmm_lastActiveMenu";
 
@@ -17,6 +25,99 @@ const moduleInitializers = {
   // Futuros módulos de página podem ser adicionados aqui
   // series: initSeries,
 };
+
+/**
+ * Atualiza o status da API no badge da sidebar.
+ * Esta função é exportada para ser usada por outros módulos (ex: settings).
+ * @param {'connected'|'disconnected'|'loading'|'error'} status O status da API.
+ */
+export function updateSidebarApiStatus(status) {
+  const allApiStatusBadges = document.querySelectorAll(".api-status-badge");
+  const allStatusSpans = document.querySelectorAll(".api-status-text");
+
+  if (allApiStatusBadges.length === 0) return;
+
+  let newClassName = "api-status-badge";
+  let newText = "";
+
+  switch (status) {
+    case "connected":
+      newText = "API Conectada";
+      newClassName += " api-connected";
+      break;
+    case "loading":
+      newText = "Validando API...";
+      newClassName += " api-loading";
+      break;
+    case "error":
+      newText = "Erro na API";
+      newClassName += " api-error";
+      break;
+    case "disconnected":
+    default:
+      newText = "API Desconectada";
+      newClassName += " api-disconnected";
+      break;
+  }
+
+  allApiStatusBadges.forEach((badge) => {
+    badge.className = newClassName;
+  });
+  allStatusSpans.forEach((span) => {
+    span.textContent = newText;
+  });
+}
+
+/**
+ * Atualiza o status da API com base nos dados armazenados localmente.
+ * Se não houver dados locais, força uma nova verificação.
+ */
+export async function updateApiStatus() {
+  const apiKey = getRdApiKey();
+  if (!apiKey) {
+    updateSidebarApiStatus("disconnected");
+    return;
+  }
+
+  const userData = getUserData();
+  if (userData && new Date(userData.expiration) > new Date()) {
+    updateSidebarApiStatus("connected");
+    // Opcional: Adicionar lógica para verificar a validade do premium e mostrar um aviso
+  } else {
+    // Se não há dados ou a conta expirou, força a verificação
+    forceCheckApiStatus();
+  }
+}
+
+/**
+ * Força a verificação da API Key, atualiza os dados locais e o status na sidebar.
+ * @returns {Promise<boolean>} Retorna true se a API Key for válida, false caso contrário.
+ */
+export async function forceCheckApiStatus() {
+  const apiKey = getRdApiKey();
+  if (!apiKey) {
+    updateSidebarApiStatus("disconnected");
+    removeUserData();
+    removeTrafficData();
+    return false;
+  }
+
+  updateSidebarApiStatus("loading");
+
+  try {
+    const userData = await getUser(apiKey);
+    saveUserData(userData); // Salva os novos dados do usuário
+    updateSidebarApiStatus("connected");
+    console.log("✅ API Key validada e dados do usuário atualizados.");
+    return true;
+  } catch (error) {
+    updateSidebarApiStatus("error");
+    removeUserData(); // Remove dados antigos em caso de erro
+    removeTrafficData(); // E também os dados de tráfego
+    console.error("Erro ao validar API Key:", error);
+    return false;
+  }
+}
 
 class NavigationManager {
   constructor() {
@@ -34,6 +135,7 @@ class NavigationManager {
   init() {
     this.setupMenuElements();
     this.setupEventListeners();
+    this.setupApiStatusCheck();
     this.showDefaultMenu();
   }
 
@@ -81,6 +183,15 @@ class NavigationManager {
         this.goBack();
       }
     });
+  }
+
+  /**
+   * Configura a verificação inicial e contínua do status da API.
+   */
+  setupApiStatusCheck() {
+    updateApiStatus();
+    // A verificação em window focus foi removida para evitar chamadas excessivas.
+    // A atualização agora é feita sob demanda.
   }
 
   /**

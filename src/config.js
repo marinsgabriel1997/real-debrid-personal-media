@@ -1,6 +1,8 @@
 const CONFIG_KEYS = {
   RD_API_KEY: "rd_api_key",
   OMDB_API_KEY: "omdb_api_key",
+  USER_DATA: "rd_user_data",
+  TRAFFIC_DATA: "rd_traffic_data",
   TORRENT_DATA_PREFIX: "rd_torrent_",
   SERIES_LIBRARY: "rd_series_library",
   MOVIE_LIBRARY: "rd_movie_library",
@@ -111,6 +113,56 @@ export function setOmdbApiKey(apiKey) {
  */
 export function removeOmdbApiKey() {
   localStorage.removeItem(CONFIG_KEYS.OMDB_API_KEY);
+}
+
+/**
+ * Salva os dados do usuário no localStorage.
+ * @param {object} userData
+ */
+export function saveUserData(userData) {
+  if (!userData) return;
+  localStorage.setItem(CONFIG_KEYS.USER_DATA, JSON.stringify(userData));
+}
+
+/**
+ * Busca os dados do usuário no localStorage.
+ * @returns {object|null}
+ */
+export function getUserData() {
+  const data = localStorage.getItem(CONFIG_KEYS.USER_DATA);
+  return data ? JSON.parse(data) : null;
+}
+
+/**
+ * Remove os dados do usuário do localStorage.
+ */
+export function removeUserData() {
+  localStorage.removeItem(CONFIG_KEYS.USER_DATA);
+}
+
+/**
+ * Salva os dados de tráfego no localStorage.
+ * @param {object} trafficData
+ */
+export function saveTrafficData(trafficData) {
+  if (!trafficData) return;
+  localStorage.setItem(CONFIG_KEYS.TRAFFIC_DATA, JSON.stringify(trafficData));
+}
+
+/**
+ * Busca os dados de tráfego no localStorage.
+ * @returns {object|null}
+ */
+export function getTrafficData() {
+  const data = localStorage.getItem(CONFIG_KEYS.TRAFFIC_DATA);
+  return data ? JSON.parse(data) : null;
+}
+
+/**
+ * Remove os dados de tráfego do localStorage.
+ */
+export function removeTrafficData() {
+  localStorage.removeItem(CONFIG_KEYS.TRAFFIC_DATA);
 }
 
 /**

@@ -2,6 +2,7 @@
  * Módulo para interagir com a API do Real-Debrid.
  * https://api.real-debrid.com/docs
  */
+import { removeUserData, removeTrafficData } from "./config.js";
 
 const API_BASE_URL = "https://api.real-debrid.com/rest/1.0/";
 
@@ -29,6 +30,8 @@ async function fetchFromApi(endpoint, apiKey, options = {}) {
 
   if (!response.ok) {
     if (response.status === 401 && apiKey) {
+      removeUserData();
+      removeTrafficData();
       throw new Error("API Key inválida ou expirada.");
     }
     // Tenta extrair a mensagem de erro da API
