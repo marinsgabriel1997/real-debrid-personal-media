@@ -157,17 +157,25 @@
                       type="text"
                       id="series-imdb-id-input"
                       class="action-input"
-                      placeholder="IMDb ID da Série (ex: tt0944947)"
+                      placeholder="ID ou Link do IMDb (ex: tt0944947)"
                     />
                     <input
                       type="text"
                       id="series-name-input"
                       class="action-input"
-                      placeholder="Nome da Série (automático via IMDb)"
+                      placeholder="Nome da Série"
                     />
-                    <button id="save-series-btn" class="action-button">
-                      Criar Série
-                    </button>
+                    <div class="button-group horizontal">
+                      <button id="save-series-btn" class="action-button">
+                        Salvar
+                      </button>
+                      <button
+                        id="fetch-series-metadata-btn"
+                        class="action-button secondary"
+                      >
+                        Buscar Metadados
+                      </button>
+                    </div>
                   </div>
                   <ul class="season-list">
                     <li class="season-item">
@@ -198,15 +206,31 @@
                   id="movie-organizer"
                   style="display: none"
                 >
-                  <div class="media-form" style="margin-top: 1rem">
+                  <div
+                    class="media-form"
+                    id="new-movie-collection-form"
+                    style="margin-top: 1rem"
+                  >
                     <input
                       type="text"
+                      id="movie-collection-name-input"
                       class="action-input"
                       placeholder="Nome da Coleção (Ex: Franquia 007)"
                     />
-                    <button class="action-button">
+                    <button
+                      id="save-movie-collection-btn"
+                      class="action-button"
+                    >
                       Criar Coleção de Filmes
                     </button>
+                  </div>
+                  <div
+                    id="selected-movie-collection-header"
+                    style="display: none"
+                  >
+                    <h3 class="panel-subtitle">
+                      Coleção: <span id="selected-movie-collection-name"></span>
+                    </h3>
                   </div>
                   <ul class="episode-list">
                     <li class="drop-zone">Arraste o arquivo do Filme 1 aqui</li>

@@ -1,13 +1,13 @@
-/* Estilos para o sistema de navegação */
+/* --- Estilos de Navegação de Menu --- */
 
-/* Estados base dos menus */
+/* Esconde todos os menus por padrão */
 [data-menu] {
   display: none;
   opacity: 0;
   transition: opacity 0.3s ease-in-out;
 }
 
-/* Menu visível */
+/* Mostra o menu que está ativo/visível */
 [data-menu].menu--visible {
   display: flex;
   flex-direction: column;
@@ -19,61 +19,4 @@
 /* Estado intermediário para a animação de saída */
 [data-menu].menu--hiding {
   opacity: 0;
-}
-
-/* Botões de navegação */
-[data-nav-to],
-[data-nav-back] {
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-[data-nav-to]:hover,
-[data-nav-back]:hover {
-  transform: translateY(-2px);
-}
-
-[data-nav-to]:active,
-[data-nav-back]:active {
-  transform: translateY(0);
-}
-
-/* Indicador de carregamento durante transições */
-.navigation-loading {
-  pointer-events: none;
-  opacity: 0.6;
-}
-
-/* Breadcrumb para navegação */
-.navigation-breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  margin-bottom: 1rem;
-  font-size: 0.9rem;
-  color: var(--text-secondary, #666);
-}
-
-.navigation-breadcrumb__item {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.navigation-breadcrumb__separator {
-  opacity: 0.5;
-}
-
-.navigation-breadcrumb__current {
-  font-weight: 500;
-  color: var(--text-primary, #333);
-}
-
-/* --- Estilos de Navegação de Menu --- */
-
-/* Efeito de clique e hover para elementos de navegação */
-[data-nav-to] {
-  cursor: pointer;
-  /* A transição é gerenciada pelo seletor específico (ex: .sidebar-nav a) 
-     para evitar conflitos, mas garantimos o cursor aqui. */
 }

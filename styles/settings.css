@@ -1,5 +1,4 @@
-/* --- Settings Page Specific Styles --- */
-
+/* --- Settings Page --- */
 .settings-section {
   background-color: var(--bg-secondary);
   padding: var(--space-lg);
@@ -15,6 +14,19 @@
   border-bottom: none;
   padding-bottom: 0;
   margin-bottom: var(--space-lg);
+}
+
+.panel-title-with-action {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--space-lg);
+}
+
+.panel-title-with-action .panel-title {
+  margin-bottom: 0;
+  border-bottom: none;
+  padding-bottom: 0;
 }
 
 .panel-subtitle {
@@ -172,6 +184,15 @@
   box-shadow: 0 0 8px var(--status-error);
 }
 
+.action-button.danger {
+  background-color: var(--status-error);
+  color: white;
+}
+
+.action-button.danger:hover {
+  background-color: #d83a3a;
+}
+
 .settings-section a {
   color: var(--text-accent);
   text-decoration: none;
@@ -180,4 +201,10 @@
 
 .settings-section a:hover {
   text-decoration: underline;
+}
+
+.button-group {
+  display: flex;
+  gap: var(--space-md);
+  align-items: center;
 }

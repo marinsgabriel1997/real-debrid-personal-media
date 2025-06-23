@@ -160,25 +160,22 @@ export async function unrestrictCheck(link, password) {
 /**
  * Desrestringe um link de hoster.
  * @param {string} apiKey A chave da API do Real-Debrid.
- * @param {string} link O link original do hoster.
  * @param {string} [password] Senha para o arquivo.
  * @param {number} [remote] 0 ou 1 para usar tráfego remoto.
  * @returns {Promise<object>}
  */
-export async function unrestrictLink(apiKey, link, password, remote) {
+export async function unrestrictLink(apiKey, params = {}) {
   if (!apiKey) {
     throw new Error("O parâmetro 'apiKey' é obrigatório.");
   }
-  if (!link) {
+  if (!params.link) {
     throw new Error("O parâmetro 'link' é obrigatório.");
   }
 
-  const params = new URLSearchParams({ link });
-  if (password) params.append("password", password);
-  if (remote !== undefined) params.append("remote", remote.toString());
+  const searchParams = new URLSearchParams(params);
   return fetchFromApi("unrestrict/link", apiKey, {
     method: "POST",
-    body: params,
+    body: searchParams,
   });
 }
 
@@ -644,6 +641,41 @@ export async function getMediaInfoFromOmdb(omdbApiKey, imdbId) {
 
   if (data.Response === "False") {
     throw new Error(data.Error || "Mídia não encontrada no OMDb.");
+  }
+
+  return data;
+}
+
+/**
+ * Busca informações de uma mídia no OMDb por título.
+ * @param {string} omdbApiKey A chave da API do OMDb.
+ * @param {string} title O título da mídia a ser pesquisado.
+ * @returns {Promise<object>} O resultado da busca.
+ */
+export async function searchMediaByTitle(omdbApiKey, title) {
+  if (!omdbApiKey) {
+    throw new Error("A chave da API do OMDb é obrigatória.");
+  }
+  if (!title) {
+    throw new Error("O título para busca é obrigatório.");
+  }
+
+  // O OMDb espera que o título seja codificado para a URL
+  const encodedTitle = encodeURIComponent(title);
+  const url = `https://www.omdbapi.com/?apikey=${omdbApiKey}&t=${encodedTitle}`;
+
+  const response = await fetch(url);
+
+  if (!response.ok) {
+    throw new Error(`Erro ao buscar dados no OMDb: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+
+  if (data.Response === "False") {
+    throw new Error(
+      data.Error || `Mídia com título "${title}" não encontrada.`
+    );
   }
 
   return data;
